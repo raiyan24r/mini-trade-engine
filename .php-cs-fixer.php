@@ -44,5 +44,16 @@ return (new Config())
             'keep_multiple_spaces_after_comma' => true,
         ],
         'single_trait_insert_per_statement' => true,
+        // Allow empty parentheses on anonymous classes: `new class () extends ... {}`
+        // Disable control parentheses normalization to avoid stripping `()` here
+        'no_unneeded_control_parentheses' => false,
+        // Always use parentheses for `new` without arguments (applies to anonymous classes too)
+        'new_with_parentheses' => true,
+        // Keep opening braces on the next line for classes/anonymous classes (new rule name)
+        'braces_position' => [
+            'classes_opening_brace' => 'next_line_unless_newline_at_signature_end',
+            'anonymous_classes_opening_brace' => 'next_line_unless_newline_at_signature_end',
+            'functions_opening_brace' => 'next_line_unless_newline_at_signature_end',
+        ],
     ])
     ->setFinder($finder);
