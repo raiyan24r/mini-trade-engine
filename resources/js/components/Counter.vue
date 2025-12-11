@@ -1,40 +1,40 @@
 <template>
-  <div class="bg-white rounded-lg shadow p-6">
-    <h2 class="text-2xl font-bold text-gray-900 mb-4">Counter Example</h2>
-    
-    <div class="space-y-4">
-      <div class="text-6xl font-bold text-blue-600 text-center">
-        {{ count }}
-      </div>
-      
-      <div class="flex gap-4 justify-center">
-        <button
-          class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded"
-          @click="decrement"
-        >
-          Decrement
-        </button>
-        
-        <button
-          class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded"
-          @click="reset"
-        >
-          Reset
-        </button>
-        
-        <button
-          class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded"
-          @click="increment"
-        >
-          Increment
-        </button>
-      </div>
-      
-      <p class="text-center text-gray-600 mt-4">
-        Double count: {{ doubleCount }}
-      </p>
+    <div class="rounded-lg bg-white p-6 shadow">
+        <h2 class="mb-4 text-2xl font-bold text-gray-900">Counter Example</h2>
+
+        <div class="space-y-4">
+            <div class="text-center text-6xl font-bold text-blue-600">
+                {{ count }}
+            </div>
+
+            <div class="flex justify-center gap-4">
+                <button
+                    class="rounded bg-red-500 px-6 py-2 font-bold text-white hover:bg-red-600"
+                    @click="decrement"
+                >
+                    Decrement
+                </button>
+
+                <button
+                    class="rounded bg-gray-500 px-6 py-2 font-bold text-white hover:bg-gray-600"
+                    @click="reset"
+                >
+                    Reset
+                </button>
+
+                <button
+                    class="rounded bg-green-500 px-6 py-2 font-bold text-white hover:bg-green-600"
+                    @click="increment"
+                >
+                    Increment
+                </button>
+            </div>
+
+            <p class="mt-4 text-center text-gray-600">
+                Double count: {{ doubleCount }}
+            </p>
+        </div>
     </div>
-  </div>
 </template>
 
 <script setup>
@@ -48,24 +48,24 @@ const doubleCount = computed(() => count.value * 2);
 
 // Methods
 const increment = () => {
-  count.value++;
+    count.value++;
 };
 
 const decrement = () => {
-  count.value--;
+    count.value--;
 };
 
 const reset = () => {
-  count.value = 0;
+    count.value = 0;
 };
 </script>
 
 <style scoped>
 button {
-  transition: all 0.3s ease;
+    transition: all 0.3s ease;
 }
 
 button:active {
-  transform: scale(0.95);
+    transform: scale(0.95);
 }
 </style>
