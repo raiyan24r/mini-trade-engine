@@ -14,8 +14,14 @@
 
 <script setup>
 defineProps({
-    label: String,
-    amount: String,
+    label: {
+        type: String,
+        default: '',
+    },
+    amount: {
+        type: String,
+        default: '',
+    },
     subtext: {
         type: String,
         default: 'Holdings',

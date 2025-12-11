@@ -22,10 +22,25 @@
 
 <script setup>
 defineProps({
-    label: String,
-    value: String,
-    subtext: String,
-    tag: String,
-    badgeColor: String,
+    label: {
+        type: String,
+        default: '',
+    },
+    value: {
+        type: String,
+        default: '',
+    },
+    subtext: {
+        type: String,
+        default: '',
+    },
+    tag: {
+        type: String,
+        default: '',
+    },
+    badgeColor: {
+        type: String,
+        default: '',
+    },
 });
 </script>

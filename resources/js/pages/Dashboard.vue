@@ -14,7 +14,7 @@
                 <div
                     class="rounded-2xl bg-slate-900/70 p-6 shadow-lg ring-1 ring-slate-800"
                 >
-                    <div class="grid grid-cols-3 gap-4">
+                    <div class="grid gap-4" :class="balanceGridClass">
                         <div
                             v-for="balance in balances"
                             :key="balance.label"
@@ -42,10 +42,7 @@
 
                 <!-- Orderbook -->
                 <section>
-                    <OrderbookCard
-                        :symbol="selectedSymbol"
-                        :orderbook="orderbook"
-                    />
+                    <OrderbookCard :symbols="['BTC', 'ETH', 'XRP']" />
                 </section>
             </div>
 
@@ -59,7 +56,8 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import axios from 'axios';
+import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuth } from '../composables/useAuth';
 import LimitOrderForm from '../components/LimitOrderForm.vue';
@@ -69,35 +67,39 @@ import OrdersTable from '../components/OrdersTable.vue';
 import DashboardHeader from '../components/DashboardHeader.vue';
 
 const router = useRouter();
-const { user, isLoading, logout, fetchUser } = useAuth();
+const { user, isLoading, logout, fetchUser, token } = useAuth();
 
-const selectedSymbol = ref('BTC');
+const profileData = ref(null);
 
-const balances = [
-    {
-        label: 'USD Balance',
-        value: '$25,430.00',
-        subtext: 'Available to trade',
-        tag: 'USD',
+const colorMap = {
+    USD: 'bg-indigo-600/20 text-indigo-200 ring-1 ring-indigo-500/40',
+    BTC: 'bg-amber-600/20 text-amber-200 ring-1 ring-amber-500/40',
+    ETH: 'bg-emerald-600/20 text-emerald-200 ring-1 ring-emerald-500/40',
+};
+
+const balances = computed(() => {
+    if (!profileData.value?.asset_balances) {
+        return [];
+    }
+
+    return profileData.value.asset_balances.map((asset) => ({
+        label: `${asset.symbol} Balance`,
+        value: `${asset.amount} ${asset.symbol}`,
+        subtext: `Total ${asset.symbol}`,
+        tag: asset.symbol,
         badgeColor:
-            'bg-indigo-600/20 text-indigo-200 ring-1 ring-indigo-500/40',
-    },
-    {
-        label: 'BTC Holdings',
-        value: '0.8421 BTC',
-        subtext: 'Long exposure',
-        tag: 'BTC',
-        badgeColor: 'bg-amber-600/20 text-amber-200 ring-1 ring-amber-500/40',
-    },
-    {
-        label: 'ETH Holdings',
-        value: '6.35 ETH',
-        subtext: 'Staked + spot',
-        tag: 'ETH',
-        badgeColor:
-            'bg-emerald-600/20 text-emerald-200 ring-1 ring-emerald-500/40',
-    },
-];
+            colorMap[asset.symbol] ||
+            'bg-slate-600/20 text-slate-200 ring-1 ring-slate-500/40',
+    }));
+});
+
+const balanceGridClass = computed(() => {
+    const length = balances.value.length;
+
+    if (length === 1) return 'grid-cols-1';
+    if (length === 2) return 'grid-cols-2';
+    return 'grid-cols-3';
+});
 
 const wallet = [
     { label: 'USD', amount: '$12,500.00' },
@@ -138,21 +140,37 @@ const orders = [
     },
 ];
 
-const orderbook = {
-    asks: [
-        { price: '$42,150', amount: '0.40' },
-        { price: '$42,140', amount: '0.25' },
-        { price: '$42,130', amount: '0.18' },
-    ],
-    bids: [
-        { price: '$42,120', amount: '0.32' },
-        { price: '$42,110', amount: '0.28' },
-        { price: '$42,100', amount: '0.35' },
-    ],
+const fetchProfile = async () => {
+    if (!token.value) {
+        router.push('/login');
+        return;
+    }
+
+    try {
+        const response = await axios.get('/api/profile');
+        profileData.value = response.data.data;
+    } catch (error) {
+        console.error('Failed to fetch profile:', error);
+        // Redirect to login if unauthorized or token missing
+        if (error.response?.status === 401) {
+            router.push('/login');
+        }
+    }
 };
 
-onMounted(() => {
-    fetchUser();
+onMounted(async () => {
+    await fetchUser();
+
+    if (!user.value) {
+        router.push('/login');
+        return;
+    }
+
+    await fetchProfile();
+
+    if (!profileData.value) {
+        router.push('/login');
+    }
 });
 
 const handleLogout = async () => {

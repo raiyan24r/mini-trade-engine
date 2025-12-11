@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helpers\HttpResponse;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -28,7 +29,7 @@ class AuthController extends Controller
             ]);
         }
 
-        return response()->json([
+        return HttpResponse::success('Login successful', [
             'token' => $user->createToken('api_token')->plainTextToken,
             'user' => $user,
         ]);
@@ -51,7 +52,7 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return response()->json([
+        return HttpResponse::success('Registration successful', [
             'token' => $user->createToken('api_token')->plainTextToken,
             'user' => $user,
         ], 201);
@@ -62,7 +63,7 @@ class AuthController extends Controller
      */
     public function user(Request $request)
     {
-        return response()->json($request->user());
+        return HttpResponse::success('User retrieved successfully', $request->user());
     }
 
     /**
@@ -72,8 +73,6 @@ class AuthController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json([
-            'message' => 'Successfully logged out',
-        ]);
+        return HttpResponse::success('Successfully logged out');
     }
 }

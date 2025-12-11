@@ -3,7 +3,13 @@
         <p class="mb-2 text-xs tracking-wide uppercase" :class="labelColor">
             {{ label }}
         </p>
-        <div class="space-y-2">
+        <div
+            v-if="loading"
+            class="rounded-lg bg-slate-900 px-3 py-4 text-center text-sm text-slate-400 ring-1 ring-slate-800"
+        >
+            Loading...
+        </div>
+        <div v-else-if="items.length" class="space-y-2">
             <div
                 v-for="item in items"
                 :key="item.price"
@@ -14,13 +20,29 @@
                 <span :class="textColor">{{ item.amount }}</span>
             </div>
         </div>
+        <div
+            v-else
+            class="rounded-lg bg-slate-900 px-3 py-4 text-center text-sm text-slate-400 ring-1 ring-slate-800"
+        >
+            No {{ label.toLowerCase() }} data
+        </div>
     </div>
 </template>
 
 <script setup>
 const props = defineProps({
-    label: String,
-    items: Array,
+    label: {
+        type: String,
+        default: '',
+    },
+    items: {
+        type: Array,
+        default: () => [],
+    },
+    loading: {
+        type: Boolean,
+        default: false,
+    },
     type: {
         type: String,
         enum: ['ask', 'bid'],

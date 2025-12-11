@@ -31,7 +31,10 @@
 
 <script setup>
 defineProps({
-    order: Object,
+    order: {
+        type: Object,
+        default: () => ({}),
+    },
 });
 
 const statusBadge = (status) => {

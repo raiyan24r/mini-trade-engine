@@ -93,13 +93,15 @@ export function useAuth() {
 
         try {
             const response = await axios.get('/api/user');
-            user.value = response.data;
+            user.value = response.data?.data || null;
         } catch (err) {
             console.error('Failed to fetch user:', err);
             // If unauthorized, clear token
             if (err.response?.status === 401) {
                 token.value = null;
+                user.value = null;
                 localStorage.removeItem('auth_token');
+                delete axios.defaults.headers.common['Authorization'];
             }
         }
     };

@@ -7,7 +7,7 @@ parameters:
         - routes
         - database
 
-    level: 5
+    level: 2
 
     excludePaths:
         - ./*/*/FileToBeExcluded.php

@@ -18,9 +18,18 @@
 
 <script setup>
 defineProps({
-    label: String,
-    title: String,
-    badge: String,
+    label: {
+        type: String,
+        default: '',
+    },
+    title: {
+        type: String,
+        default: '',
+    },
+    badge: {
+        type: String,
+        default: '',
+    },
     titleClass: {
         type: String,
         default: 'text-xl font-semibold text-white',
