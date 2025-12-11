@@ -10,7 +10,7 @@
       </div>
 
       <!-- Login form -->
-      <form @submit.prevent="handleLogin" class="space-y-6">
+      <form class="space-y-6" @submit.prevent="handleLogin">
         <!-- Email field -->
         <div>
           <label for="email" class="block text-sm font-medium text-gray-700 mb-2">

@@ -9,22 +9,22 @@
       
       <div class="flex gap-4 justify-center">
         <button
-          @click="decrement"
           class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded"
+          @click="decrement"
         >
           Decrement
         </button>
         
         <button
-          @click="reset"
           class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded"
+          @click="reset"
         >
           Reset
         </button>
         
         <button
-          @click="increment"
           class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded"
+          @click="increment"
         >
           Increment
         </button>

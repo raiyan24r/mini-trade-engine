@@ -7,9 +7,9 @@
         <div class="flex items-center gap-4">
           <span class="text-gray-700">{{ user?.name || 'User' }}</span>
           <button
-            @click="handleLogout"
             :disabled="isLoading"
             class="bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
+            @click="handleLogout"
           >
             {{ isLoading ? 'Logging out...' : 'Logout' }}
           </button>
