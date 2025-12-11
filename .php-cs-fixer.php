@@ -37,7 +37,6 @@ return (new Config())
                 'const' => 'one',
                 'method' => 'one',
                 'property' => 'one',
-                'trait_import' => 'none',
             ],
         ],
         'method_argument_space' => [
