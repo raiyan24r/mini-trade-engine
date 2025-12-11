@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-// Catch all routes and serve the SPA
+// Catch all routes except /api and serve the SPA
 Route::get('{any}', function () {
     return view('app');
-})->where('any', '.*');
+})->where('any', '^(?!api).*$');
