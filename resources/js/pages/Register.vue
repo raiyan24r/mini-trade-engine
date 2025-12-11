@@ -162,6 +162,7 @@ const handleRegister = async () => {
       router.push('/dashboard');
     }, 1500);
   } catch (err) {
+    console.log('Registration failed:', err);
     error.value = authError.value || 'Registration failed. Please try again.';
   }
 };

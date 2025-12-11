@@ -62,7 +62,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuth } from '../composables/useAuth';
 
@@ -70,7 +70,7 @@ const router = useRouter();
 const { user, isLoading, logout, fetchUser } = useAuth();
 
 onMounted(() => {
-  // Fetch user data when component mounts
+
   fetchUser();
 });
 

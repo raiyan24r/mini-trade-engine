@@ -90,7 +90,7 @@ const handleLogin = async () => {
     // Redirect to dashboard on successful login
     router.push('/dashboard');
   } catch (err) {
-    // Error is already set in the composable
+    console.error('Login failed:', err);
   }
 };
 </script>
