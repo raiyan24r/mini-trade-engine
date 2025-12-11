@@ -9,7 +9,6 @@ class Order extends Model
     public const STATUS_OPEN = 1;
     public const STATUS_FILLED = 2;
     public const STATUS_CANCELLED = 3;
-
     public const SIDE_BUY = 'buy';
     public const SIDE_SELL = 'sell';
 

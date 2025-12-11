@@ -34,7 +34,6 @@ return (new Config())
         'phpdoc_var_without_name' => true,
         'class_attributes_separation' => [
             'elements' => [
-                'const' => 'one',
                 'method' => 'one',
                 'property' => 'one',
             ],
@@ -44,10 +43,5 @@ return (new Config())
             'keep_multiple_spaces_after_comma' => true,
         ],
         'single_trait_insert_per_statement' => true,
-        // Allow empty parentheses on anonymous classes: `new class () extends ... {}`
-        // Disable control parentheses normalization to avoid stripping `()` here
-        'no_unneeded_control_parentheses' => false,
-        // Always use parentheses for `new` without arguments (applies to anonymous classes too)
-        'new_with_parentheses' => true,
     ])
     ->setFinder($finder);
