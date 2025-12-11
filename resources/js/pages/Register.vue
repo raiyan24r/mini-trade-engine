@@ -1,17 +1,21 @@
 <template>
-    <div
-        class="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4"
-    >
-        <div class="w-full max-w-md rounded-lg bg-white p-8 shadow-xl">
-            <h1 class="mb-2 text-3xl font-bold text-gray-900">
-                Mini Trade Engine
-            </h1>
-            <p class="mb-8 text-gray-600">Create your account</p>
+    <div class="flex min-h-screen items-center justify-center bg-slate-950 p-4">
+        <div
+            class="w-full max-w-md rounded-2xl bg-slate-900/70 p-8 shadow-lg ring-1 ring-slate-800"
+        >
+            <div class="mb-8">
+                <p class="text-sm tracking-[0.25em] text-slate-400 uppercase">
+                    Create account
+                </p>
+                <h1 class="text-3xl font-semibold text-white">
+                    Mini Trade Engine
+                </h1>
+            </div>
 
             <!-- Error message -->
             <div
                 v-if="error"
-                class="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-red-700"
+                class="mb-4 rounded-xl border border-rose-500/40 bg-rose-600/10 p-4 text-rose-200"
             >
                 {{ error }}
             </div>
@@ -19,18 +23,18 @@
             <!-- Success message -->
             <div
                 v-if="successMessage"
-                class="mb-4 rounded-lg border border-green-200 bg-green-50 p-4 text-green-700"
+                class="mb-4 rounded-xl border border-emerald-500/40 bg-emerald-600/10 p-4 text-emerald-200"
             >
                 {{ successMessage }}
             </div>
 
             <!-- Register form -->
-            <form class="space-y-6" @submit.prevent="handleRegister">
+            <form class="space-y-5" @submit.prevent="handleRegister">
                 <!-- Name field -->
                 <div>
                     <label
                         for="name"
-                        class="mb-2 block text-sm font-medium text-gray-700"
+                        class="mb-2 block text-sm font-medium text-slate-300"
                     >
                         Full Name
                     </label>
@@ -39,7 +43,7 @@
                         v-model="form.name"
                         type="text"
                         required
-                        class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        class="w-full rounded-xl border border-slate-800 bg-slate-900 px-4 py-3 text-white placeholder-slate-500 shadow-inner transition focus:border-indigo-500 focus:outline-none"
                         placeholder="John Doe"
                     />
                 </div>
@@ -48,7 +52,7 @@
                 <div>
                     <label
                         for="email"
-                        class="mb-2 block text-sm font-medium text-gray-700"
+                        class="mb-2 block text-sm font-medium text-slate-300"
                     >
                         Email
                     </label>
@@ -57,7 +61,7 @@
                         v-model="form.email"
                         type="email"
                         required
-                        class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        class="w-full rounded-xl border border-slate-800 bg-slate-900 px-4 py-3 text-white placeholder-slate-500 shadow-inner transition focus:border-indigo-500 focus:outline-none"
                         placeholder="you@example.com"
                     />
                 </div>
@@ -66,7 +70,7 @@
                 <div>
                     <label
                         for="password"
-                        class="mb-2 block text-sm font-medium text-gray-700"
+                        class="mb-2 block text-sm font-medium text-slate-300"
                     >
                         Password
                     </label>
@@ -76,10 +80,10 @@
                         type="password"
                         required
                         minlength="8"
-                        class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        class="w-full rounded-xl border border-slate-800 bg-slate-900 px-4 py-3 text-white placeholder-slate-500 shadow-inner transition focus:border-indigo-500 focus:outline-none"
                         placeholder="Minimum 8 characters"
                     />
-                    <p class="mt-1 text-xs text-gray-500">
+                    <p class="mt-1 text-xs text-slate-400">
                         Must be at least 8 characters
                     </p>
                 </div>
@@ -88,7 +92,7 @@
                 <div>
                     <label
                         for="password_confirmation"
-                        class="mb-2 block text-sm font-medium text-gray-700"
+                        class="mb-2 block text-sm font-medium text-slate-300"
                     >
                         Confirm Password
                     </label>
@@ -98,12 +102,12 @@
                         type="password"
                         required
                         minlength="8"
-                        class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        class="w-full rounded-xl border border-slate-800 bg-slate-900 px-4 py-3 text-white placeholder-slate-500 shadow-inner transition focus:border-indigo-500 focus:outline-none"
                         placeholder="Confirm your password"
                     />
                     <p
                         v-if="passwordMismatch"
-                        class="mt-1 text-xs text-red-600"
+                        class="mt-1 text-xs text-rose-400"
                     >
                         Passwords do not match
                     </p>
@@ -113,7 +117,7 @@
                 <button
                     type="submit"
                     :disabled="isLoading || passwordMismatch"
-                    class="w-full rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white transition duration-200 hover:bg-blue-700 disabled:bg-blue-400"
+                    class="w-full rounded-xl bg-indigo-600 px-4 py-3 font-semibold text-white transition duration-200 hover:bg-indigo-700 disabled:bg-indigo-500"
                 >
                     {{ isLoading ? 'Creating account...' : 'Create Account' }}
                 </button>
@@ -121,11 +125,11 @@
 
             <!-- Login link -->
             <div class="mt-6 text-center">
-                <p class="text-gray-600">
+                <p class="text-slate-400">
                     Already have an account?
                     <RouterLink
                         to="/login"
-                        class="font-semibold text-blue-600 hover:text-blue-700"
+                        class="font-semibold text-indigo-400 transition hover:text-indigo-300"
                     >
                         Sign in
                     </RouterLink>
