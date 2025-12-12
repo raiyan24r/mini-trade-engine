@@ -49,6 +49,7 @@
             <!-- Orders overview -->
             <section class="mt-8 space-y-6">
                 <OrdersTable :orders="orders" />
+                <BalanceHistoryTable />
             </section>
         </div>
     </div>
@@ -62,6 +63,7 @@ import { useAuth } from '../composables/useAuth';
 import LimitOrderForm from '../components/LimitOrderForm.vue';
 import OrderbookCard from '../components/OrderbookCard.vue';
 import OrdersTable from '../components/OrdersTable.vue';
+import BalanceHistoryTable from '../components/BalanceHistoryTable.vue';
 import DashboardHeader from '../components/DashboardHeader.vue';
 
 const router = useRouter();

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Helpers\HttpResponse;
 use App\Http\Requests\CreateOrderRequest;
+use App\Services\BalanceHistoryQueryService;
 use App\Services\OrderService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -12,10 +13,14 @@ use RuntimeException;
 class OrderController
 {
     private OrderService $orderService;
+    private BalanceHistoryQueryService $balanceHistoryService;
 
-    public function __construct(OrderService $orderService)
-    {
+    public function __construct(
+        OrderService $orderService,
+        BalanceHistoryQueryService $balanceHistoryService
+    ) {
         $this->orderService = $orderService;
+        $this->balanceHistoryService = $balanceHistoryService;
     }
 
     public function index(Request $request): JsonResponse
@@ -64,5 +69,12 @@ class OrderController
         } catch (RuntimeException $e) {
             return HttpResponse::error($e->getMessage(), null, 400);
         }
+    }
+
+    public function balanceHistory(Request $request): JsonResponse
+    {
+        $history = $this->balanceHistoryService->getUserBalanceHistory($request->user()->id);
+
+        return HttpResponse::success('Balance history retrieved successfully', $history);
     }
 }

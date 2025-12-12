@@ -88,12 +88,6 @@ class OrderService
         return $this->db->transaction(function () use ($userId, $symbol, $side, $price, $amount): array {
             $user = User::whereKey($userId)->lockForUpdate()->firstOrFail();
 
-            if ($side === Order::SIDE_BUY) {
-                $this->reserveBuyFunds($user, $price, $amount);
-            } else {
-                $this->reserveSellAsset($user, $symbol, $amount);
-            }
-
             $order = Order::create([
                 'user_id' => $user->id,
                 'symbol' => $symbol,
@@ -103,6 +97,12 @@ class OrderService
                 'filled_amount' => 0,
                 'status' => Order::STATUS_OPEN,
             ]);
+
+            if ($side === Order::SIDE_BUY) {
+                $this->reserveBuyFunds($user, $price, $amount, $order->id);
+            } else {
+                $this->reserveSellAsset($user, $symbol, $amount);
+            }
 
             $trade = null;
 
@@ -125,7 +125,7 @@ class OrderService
         });
     }
 
-    private function reserveBuyFunds(User $user, float $price, float $amount): void
+    private function reserveBuyFunds(User $user, float $price, float $amount, ?int $orderId = null): void
     {
         $cost = $price * $amount;
         $feeReserve = $cost * self::COMMISSION_RATE;
@@ -138,6 +138,10 @@ class OrderService
         $newBalance = $this->formatDecimal((float) $user->balance - $totalReserve);
         $user->balance = $newBalance;
         $user->save();
+
+        if ($orderId) {
+            BalanceHistoryService::logOrderReservation($user, $totalReserve, $orderId, 'buy');
+        }
     }
 
     private function reserveSellAsset(User $user, string $symbol, float $amount): void
@@ -174,6 +178,8 @@ class OrderService
         $refund = $buyerReservedTotal - $actualSpend;
         if ($refund > 0) {
             $buyer->balance = (float) $buyer->balance + $refund;
+            $buyer->save();
+            BalanceHistoryService::logOrderRefund($buyer, $refund, $buyOrder->id);
         }
 
         $buyerAsset = Asset::where('user_id', $buyer->id)
@@ -226,6 +232,8 @@ class OrderService
             'amount' => $amount,
         ]);
 
+        BalanceHistoryService::logTradeEarnings($seller, $volume, $trade->id, $buyOrder->symbol);
+
         return $trade->toArray();
     }
 
@@ -257,6 +265,8 @@ class OrderService
 
                 $user->balance = (float) $user->balance + $totalReserve;
                 $user->save();
+
+                BalanceHistoryService::logOrderCancellation($user, $totalReserve, $order->id);
             } else {
                 $asset = Asset::where('user_id', $userId)
                     ->where('symbol', $order->symbol)

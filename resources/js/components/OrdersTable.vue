@@ -147,13 +147,56 @@
                     class="divide-y divide-slate-800 bg-slate-900/60 text-slate-200"
                 >
                     <OrderRow
-                        v-for="order in filteredOrders"
+                        v-for="order in paginatedOrders"
                         :key="order.id"
                         :order="order"
                         @cancel="handleCancelOrder"
                     />
                 </tbody>
             </table>
+        </div>
+
+        <!-- Pagination -->
+        <div
+            v-if="filteredOrders.length > itemsPerPage"
+            class="mt-4 flex items-center justify-between"
+        >
+            <div class="text-sm text-slate-400">
+                Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to
+                {{
+                    Math.min(currentPage * itemsPerPage, filteredOrders.length)
+                }}
+                of {{ filteredOrders.length }} orders
+            </div>
+            <div class="flex gap-2">
+                <button
+                    :disabled="currentPage === 1"
+                    class="rounded-lg bg-slate-800 px-3 py-2 text-sm font-semibold text-slate-300 transition-colors hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
+                    @click="goToPage(currentPage - 1)"
+                >
+                    Previous
+                </button>
+                <button
+                    v-for="page in totalPages"
+                    :key="page"
+                    :class="[
+                        'rounded-lg px-3 py-2 text-sm font-semibold transition-colors',
+                        currentPage === page
+                            ? 'bg-indigo-600 text-white'
+                            : 'bg-slate-800 text-slate-300 hover:bg-slate-700',
+                    ]"
+                    @click="goToPage(page)"
+                >
+                    {{ page }}
+                </button>
+                <button
+                    :disabled="currentPage === totalPages"
+                    class="rounded-lg bg-slate-800 px-3 py-2 text-sm font-semibold text-slate-300 transition-colors hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
+                    @click="goToPage(currentPage + 1)"
+                >
+                    Next
+                </button>
+            </div>
         </div>
     </BaseCard>
 </template>
@@ -171,6 +214,8 @@ const orders = ref([]);
 const loading = ref(false);
 const sortBy = ref('date');
 const sortOrder = ref('desc');
+const currentPage = ref(1);
+const itemsPerPage = 10;
 
 const filters = ref({
     symbol: '',
@@ -257,6 +302,16 @@ const filteredOrders = computed(() => {
     return filtered;
 });
 
+const totalPages = computed(() => {
+    return Math.ceil(filteredOrders.value.length / itemsPerPage);
+});
+
+const paginatedOrders = computed(() => {
+    const start = (currentPage.value - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    return filteredOrders.value.slice(start, end);
+});
+
 const toggleSort = (column) => {
     if (sortBy.value === column) {
         sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
@@ -272,6 +327,13 @@ const resetFilters = () => {
         side: '',
         status: '',
     };
+    currentPage.value = 1;
+};
+
+const goToPage = (page) => {
+    if (page >= 1 && page <= totalPages.value) {
+        currentPage.value = page;
+    }
 };
 
 const fetchOrders = async () => {
