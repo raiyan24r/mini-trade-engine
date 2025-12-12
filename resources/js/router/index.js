@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { useAuth } from '../composables/useAuth';
 import Dashboard from '../pages/Dashboard.vue';
 import Login from '../pages/Login.vue';
 import Register from '../pages/Register.vue';
@@ -34,9 +35,20 @@ const router = createRouter({
 });
 
 // Navigation guard for authentication
-router.beforeEach((to, from, next) => {
-    const token = localStorage.getItem('auth_token');
-    const isAuthenticated = !!token;
+router.beforeEach(async (to, from, next) => {
+    const { token, user, fetchUser } = useAuth();
+    const isAuthenticated = !!(
+        token.value || localStorage.getItem('auth_token')
+    );
+
+    // If we have a token but no user yet, attempt to fetch
+    if (isAuthenticated && !user.value) {
+        try {
+            await fetchUser();
+        } catch (e) {
+            // If fetch fails/401, fall back to unauthenticated state
+        }
+    }
 
     if (to.meta.requiresAuth && !isAuthenticated) {
         // Redirect to login if trying to access protected route without token

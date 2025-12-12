@@ -9,15 +9,37 @@
         >
             Loading...
         </div>
-        <div v-else-if="items.length" class="space-y-2">
+
+        <div v-else-if="items.length">
             <div
-                v-for="item in items"
-                :key="item.price"
-                class="flex items-center justify-between rounded-lg px-3 py-2 text-sm"
-                :class="bgColor"
+                class="flex items-center justify-between rounded-lg pb-1 text-sm"
             >
-                <span>{{ item.price }}</span>
-                <span :class="textColor">{{ item.amount }}</span>
+                <span>Price</span>
+                <span :class="textColor">Amount</span>
+            </div>
+            <div class="space-y-2">
+                <div
+                    v-for="item in items"
+                    :key="item.price"
+                    class="flex items-center justify-between rounded-lg px-3 text-sm"
+                    :class="[
+                        bgColor,
+                        item.user_id === myUserId
+                            ? 'py-3! ring-1 ring-indigo-500/70'
+                            : 'py-2 ring-1 ring-slate-800',
+                    ]"
+                >
+                    <span class="flex items-center gap-2">
+                        <span>{{ item.price }}</span>
+                        <span
+                            v-if="item.user_id === myUserId"
+                            class="inline-flex items-center rounded-full bg-indigo-600/20 px-2 py-0.5 text-[10px] font-semibold text-indigo-200 ring-1 ring-indigo-500/40"
+                        >
+                            Mine
+                        </span>
+                    </span>
+                    <span :class="textColor">{{ item.amount }}</span>
+                </div>
             </div>
         </div>
         <div
@@ -30,6 +52,9 @@
 </template>
 
 <script setup>
+import { computed } from 'vue';
+import { useAuth } from '../composables/useAuth';
+
 const props = defineProps({
     label: {
         type: String,
@@ -66,4 +91,7 @@ const colorMap = {
 const bgColor = colorMap[props.type].bg;
 const labelColor = colorMap[props.type].label;
 const textColor = colorMap[props.type].text;
+
+const { user } = useAuth();
+const myUserId = computed(() => user.value?.id ?? null);
 </script>

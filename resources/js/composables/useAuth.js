@@ -24,8 +24,8 @@ export function useAuth() {
                 password,
             });
 
-            token.value = response.data.token;
-            user.value = response.data.user;
+            token.value = response.data.data.token;
+            user.value = response.data.data.user;
 
             // Store token in localStorage
             localStorage.setItem('auth_token', token.value);
@@ -55,8 +55,8 @@ export function useAuth() {
                 password_confirmation: passwordConfirmation,
             });
 
-            token.value = response.data.token;
-            user.value = response.data.user;
+            token.value = response.data.data.token;
+            user.value = response.data.data.user;
 
             localStorage.setItem('auth_token', token.value);
             axios.defaults.headers.common['Authorization'] =

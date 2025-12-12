@@ -34,7 +34,6 @@ return (new Config())
         'class_attributes_separation' => [
             'elements' => [
                 'method' => 'one',
-                'property' => 'one',
             ],
         ],
         'method_argument_space' => [

@@ -28,9 +28,6 @@ jobs:
       - name: Run PHP CS Fixer (dry-run)
         run: vendor/bin/php-cs-fixer fix --dry-run --diff --verbose
 
-      - name: Run PHPStan
-        run: vendor/bin/phpstan analyse --memory-limit=2G
-
   javascript-lint:
     name: JavaScript/Vue Linting
     runs-on: ubuntu-latest

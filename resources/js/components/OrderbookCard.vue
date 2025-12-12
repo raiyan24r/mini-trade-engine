@@ -1,10 +1,6 @@
 <template>
     <BaseCard>
-        <CardHeader
-            label="Orderbook"
-            :title="`${selectedSymbol}/USD`"
-            badge="Depth"
-        />
+        <CardHeader label="Orderbook" :title="`${selectedSymbol}/USD`" />
 
         <div class="mt-3 flex flex-wrap gap-2">
             <button
@@ -25,14 +21,14 @@
 
         <div class="mt-4 space-y-3">
             <OrderbookSection
-                label="Asks"
+                label="SELL (Asks)"
                 :items="orderbook.asks"
                 :loading="loading"
                 type="ask"
             />
 
             <OrderbookSection
-                label="Bids"
+                label="BUY (Bids)"
                 :items="orderbook.bids"
                 :loading="loading"
                 type="bid"

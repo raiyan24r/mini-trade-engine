@@ -36,12 +36,10 @@ class DatabaseSeeder extends Seeder
             $users[1]->id => [
                 ['symbol' => 'BTC', 'amount' => '1.00000000'],
                 ['symbol' => 'ETH', 'amount' => '5.00000000'],
-                ['symbol' => 'XRP', 'amount' => '100.00000000'],
             ],
             $users[2]->id => [
                 ['symbol' => 'BTC', 'amount' => '0.25000000'],
                 ['symbol' => 'ETH', 'amount' => '10.00000000'],
-                ['symbol' => 'XRP', 'amount' => '50.00000000'],
             ],
         ];
 

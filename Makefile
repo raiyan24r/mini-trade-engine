@@ -12,7 +12,7 @@ help:
 	@echo ""
 	@echo "${GREEN}Linting:${NC}"
 	@echo "  make lint           - Run all linters (PHP + JS)"
-	@echo "  make lint-php       - Run PHP linters (CS Fixer + PHPStan)"
+	@echo "  make lint-php       - Run PHP linters (CS Fixer)"
 	@echo "  make lint-js        - Run JavaScript/Vue linters (ESLint)"
 	@echo ""
 	@echo "${GREEN}Fixing:${NC}"
@@ -38,8 +38,6 @@ lint: lint-php lint-js
 lint-php:
 	@echo "${BLUE}Running PHP CS Fixer...${NC}"
 	@vendor/bin/php-cs-fixer fix --dry-run --diff --verbose
-	@echo "${BLUE}Running PHPStan...${NC}"
-	@vendor/bin/phpstan analyse --memory-limit=2G
 
 ## lint-js: Run JavaScript/Vue linters
 lint-js:

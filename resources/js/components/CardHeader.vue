@@ -9,6 +9,7 @@
             </h2>
         </div>
         <span
+            v-if="badge"
             class="rounded-full bg-slate-800 px-3 py-1 text-xs text-slate-300"
         >
             {{ badge }}

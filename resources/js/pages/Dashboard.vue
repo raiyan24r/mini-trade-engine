@@ -14,7 +14,7 @@
                 <div
                     class="rounded-2xl bg-slate-900/70 p-6 shadow-lg ring-1 ring-slate-800"
                 >
-                    <div class="grid gap-4" :class="balanceGridClass">
+                    <div class="grid grid-cols-3 gap-4">
                         <div
                             v-for="balance in balances"
                             :key="balance.label"
@@ -42,13 +42,12 @@
 
                 <!-- Orderbook -->
                 <section>
-                    <OrderbookCard :symbols="['BTC', 'ETH', 'XRP']" />
+                    <OrderbookCard :symbols="['BTC', 'ETH']" />
                 </section>
             </div>
 
             <!-- Orders and wallet overview -->
             <section class="mt-8 space-y-6">
-                <WalletOverview :assets="wallet" />
                 <OrdersTable :orders="orders" />
             </section>
         </div>
@@ -62,7 +61,6 @@ import { useRouter } from 'vue-router';
 import { useAuth } from '../composables/useAuth';
 import LimitOrderForm from '../components/LimitOrderForm.vue';
 import OrderbookCard from '../components/OrderbookCard.vue';
-import WalletOverview from '../components/WalletOverview.vue';
 import OrdersTable from '../components/OrdersTable.vue';
 import DashboardHeader from '../components/DashboardHeader.vue';
 
@@ -78,37 +76,41 @@ const colorMap = {
 };
 
 const balances = computed(() => {
-    if (!profileData.value?.asset_balances) {
+    if (!profileData.value) {
         return [];
     }
 
-    return profileData.value.asset_balances.map((asset) => ({
-        label: `${asset.symbol} Balance`,
-        value: `${asset.amount} ${asset.symbol}`,
-        subtext: `Total ${asset.symbol}`,
-        tag: asset.symbol,
-        badgeColor:
-            colorMap[asset.symbol] ||
-            'bg-slate-600/20 text-slate-200 ring-1 ring-slate-500/40',
-    }));
+    const cards = [];
+
+    // Add USD balance first
+    if (user.value?.balance !== undefined) {
+        cards.push({
+            label: 'USD Balance',
+            value: `${parseFloat(user.value.balance).toFixed(2)} USD`,
+            subtext: 'Available to trade',
+            tag: 'USD',
+            badgeColor:
+                'bg-indigo-600/20 text-indigo-200 ring-1 ring-indigo-500/40',
+        });
+    }
+
+    // Add asset balances
+    if (profileData.value.asset_balances) {
+        profileData.value.asset_balances.forEach((asset) => {
+            cards.push({
+                label: `${asset.symbol} Balance`,
+                value: `${asset.amount} ${asset.symbol}`,
+                subtext: `Total ${asset.symbol}`,
+                tag: asset.symbol,
+                badgeColor:
+                    colorMap[asset.symbol] ||
+                    'bg-slate-600/20 text-slate-200 ring-1 ring-slate-500/40',
+            });
+        });
+    }
+
+    return cards;
 });
-
-const balanceGridClass = computed(() => {
-    const length = balances.value.length;
-
-    if (length === 1) return 'grid-cols-1';
-    if (length === 2) return 'grid-cols-2';
-    return 'grid-cols-3';
-});
-
-const wallet = [
-    { label: 'USD', amount: '$12,500.00' },
-    { label: 'BTC', amount: '0.5400' },
-    { label: 'ETH', amount: '3.2000' },
-    { label: 'USDT', amount: '5,000.00' },
-    { label: 'SOL', amount: '28.4' },
-    { label: 'XRP', amount: '320.0' },
-];
 
 const orders = [
     {

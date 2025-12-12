@@ -4,6 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property float $price
+ * @property float $amount
+ * @property float $filled_amount
+ */
 class Order extends Model
 {
     public const STATUS_OPEN = 1;
@@ -26,9 +31,9 @@ class Order extends Model
     protected function casts(): array
     {
         return [
-            'price' => 'decimal:8',
-            'amount' => 'decimal:8',
-            'filled_amount' => 'decimal:8',
+            'price' => 'float',
+            'amount' => 'float',
+            'filled_amount' => 'float',
             'status' => 'integer',
         ];
     }

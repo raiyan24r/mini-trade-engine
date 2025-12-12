@@ -3,7 +3,6 @@
         <CardHeader
             label="Limit Order"
             title="Place a new order"
-            badge="Draft"
             title-class="text-2xl font-semibold text-white"
         />
 
@@ -84,19 +83,43 @@
                 </p>
             </div>
             <button
-                class="rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-600/30 transition hover:bg-indigo-700"
+                type="button"
+                :disabled="loading"
+                class="rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-600/30 transition hover:bg-indigo-700 disabled:opacity-50"
                 @click="placeOrder"
             >
-                Place Order
+                {{ loading ? 'Placing...' : 'Place Order' }}
             </button>
+        </div>
+
+        <!-- Error message -->
+        <div
+            v-if="error"
+            class="mt-4 rounded-xl border border-rose-500/40 bg-rose-600/10 p-4 text-rose-200"
+        >
+            {{ error }}
+        </div>
+
+        <!-- Success message -->
+        <div
+            v-if="success"
+            class="mt-4 rounded-xl border border-emerald-500/40 bg-emerald-600/10 p-4 text-emerald-200"
+        >
+            {{ success }}
         </div>
     </BaseCard>
 </template>
 
 <script setup>
-import { computed, reactive } from 'vue';
+import axios from 'axios';
+import { computed, reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useAuth } from '../composables/useAuth';
 import BaseCard from './BaseCard.vue';
 import CardHeader from './CardHeader.vue';
+
+const router = useRouter();
+const { token } = useAuth();
 
 const form = reactive({
     symbol: 'BTC',
@@ -104,6 +127,10 @@ const form = reactive({
     price: '',
     amount: '',
 });
+
+const loading = ref(false);
+const error = ref('');
+const success = ref('');
 
 const estimatedTotal = computed(() => {
     const price = parseFloat(form.price) || 0;
@@ -114,10 +141,40 @@ const estimatedTotal = computed(() => {
         : '0.00';
 });
 
-const placeOrder = () => {
-    // Placeholder interaction for now
-    window.alert(
-        `Order placed: ${form.side.toUpperCase()} ${form.amount || '0'} ${form.symbol} at ${form.price || 'market'}`,
-    );
+const placeOrder = async () => {
+    if (!token.value) {
+        router.push('/login');
+        return;
+    }
+
+    error.value = '';
+    success.value = '';
+    loading.value = true;
+
+    try {
+        const response = await axios.post('/api/orders', {
+            symbol: form.symbol,
+            side: form.side,
+            price: parseFloat(form.price),
+            amount: parseFloat(form.amount),
+        });
+
+        success.value = response.data.message || 'Order placed successfully!';
+
+        // Reset form
+        form.price = '';
+        form.amount = '';
+
+        // Clear success message after 5 seconds
+        setTimeout(() => {
+            success.value = '';
+        }, 5000);
+    } catch (err) {
+        error.value =
+            err.response?.data?.message || 'Failed to place order. Try again.';
+        console.error('Order placement error:', err);
+    } finally {
+        loading.value = false;
+    }
 };
 </script>
