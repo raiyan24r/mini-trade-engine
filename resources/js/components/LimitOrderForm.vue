@@ -113,6 +113,7 @@ import axios from 'axios';
 import { computed, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuth } from '../composables/useAuth';
+import { useToast } from '../composables/useToast';
 import BaseCard from './BaseCard.vue';
 import CardHeader from './CardHeader.vue';
 
@@ -120,6 +121,7 @@ const emit = defineEmits(['orderPlaced']);
 
 const router = useRouter();
 const { token } = useAuth();
+const toast = useToast();
 
 const form = reactive({
     symbol: 'BTC',
@@ -171,14 +173,14 @@ const placeOrder = async () => {
         form.price = '';
         form.amount = '';
 
-        // Clear success message after 5 seconds
         setTimeout(() => {
             success.value = '';
         }, 5000);
     } catch (err) {
-        error.value =
+        const errorMsg =
             err.response?.data?.message || 'Failed to place order. Try again.';
-        console.error('Order placement error:', err);
+        error.value = errorMsg;
+        toast.error(errorMsg);
     } finally {
         loading.value = false;
     }

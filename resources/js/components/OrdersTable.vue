@@ -214,12 +214,14 @@
 import axios from 'axios';
 import { computed, onMounted, onBeforeUnmount, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useToast } from '../composables/useToast';
 import BaseCard from './BaseCard.vue';
 import CardHeader from './CardHeader.vue';
 import OrderRow from './OrderRow.vue';
 import { usePusher } from '../composables/usePusher.js';
 
 const router = useRouter();
+const toast = useToast();
 const orders = ref([]);
 const loading = ref(false);
 const sortBy = ref('date');
@@ -355,19 +357,32 @@ const fetchOrders = async () => {
         console.error('Failed to fetch orders:', error);
         if (error.response?.status === 401) {
             router.push('/login');
+        } else {
+            toast.error('Failed to load orders. Please try again.');
         }
     } finally {
         loading.value = false;
     }
 };
 
+const refreshOrders = async () => {
+    await fetchOrders();
+};
+
+defineExpose({
+    refreshOrders,
+});
+
 const handleCancelOrder = async (orderId) => {
     try {
         await axios.post(`/api/orders/${orderId}/cancel`);
-        // Refresh the orders list after successful cancellation
         await fetchOrders();
+        toast.success('Order cancelled successfully.');
+        // eslint-disable-next-line no-undef
+        window.dispatchEvent(new Event('orderCancelled'));
     } catch (error) {
         console.error('Failed to cancel order:', error);
+        toast.error(error.response?.data?.message || 'Failed to cancel order.');
     }
 };
 

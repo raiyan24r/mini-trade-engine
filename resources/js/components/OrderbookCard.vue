@@ -42,6 +42,7 @@ import axios from 'axios';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuth } from '../composables/useAuth';
+import { useToast } from '../composables/useToast';
 import { usePusher } from '../composables/usePusher';
 import BaseCard from './BaseCard.vue';
 import CardHeader from './CardHeader.vue';
@@ -60,6 +61,7 @@ const props = defineProps({
 
 const router = useRouter();
 const { token } = useAuth();
+const toast = useToast();
 const { listenToOrderMatched, unsubscribe } = usePusher();
 
 const selectedSymbol = ref(props.initialSymbol || props.symbols[0] || 'BTC');
@@ -92,6 +94,8 @@ const fetchOrderbook = async (symbol) => {
         console.error('Failed to fetch orderbook:', error);
         if (error.response?.status === 401) {
             router.push('/login');
+        } else {
+            toast.error('Failed to load orderbook. Please try again.');
         }
     } finally {
         loading.value = false;
@@ -116,8 +120,14 @@ onMounted(async () => {
 
     listenToOrderMatched(handleOrderMatched);
 
+    const handleOrderCancelled = () => {
+        fetchOrderbook(selectedSymbol.value);
+    };
+    window.addEventListener('orderCancelled', handleOrderCancelled);
+
     onBeforeUnmount(() => {
         unsubscribe(handleOrderMatched);
+        window.removeEventListener('orderCancelled', handleOrderCancelled);
     });
 });
 </script>

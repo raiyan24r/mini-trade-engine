@@ -15,7 +15,7 @@
         </div>
         <div class="flex items-center gap-4">
             <div
-                class="rounded-xl bg-slate-800 px-4 py-2 text-sm text-slate-200"
+                class="rounded-xl bg-slate-800 px-4 py-2 text-xl text-slate-200"
             >
                 {{ userName }}
             </div>

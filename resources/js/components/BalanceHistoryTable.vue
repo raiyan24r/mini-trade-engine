@@ -131,11 +131,13 @@
 import axios from 'axios';
 import { computed, onMounted, onBeforeUnmount, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useToast } from '../composables/useToast';
 import BaseCard from './BaseCard.vue';
 import CardHeader from './CardHeader.vue';
 import { usePusher } from '../composables/usePusher.js';
 
 const router = useRouter();
+const toast = useToast();
 const history = ref([]);
 const loading = ref(false);
 const currentPage = ref(1);
@@ -197,6 +199,8 @@ const fetchHistory = async () => {
         console.error('Failed to fetch balance history:', error);
         if (error.response?.status === 401) {
             router.push('/login');
+        } else {
+            toast.error('Failed to load balance history. Please try again.');
         }
     } finally {
         loading.value = false;

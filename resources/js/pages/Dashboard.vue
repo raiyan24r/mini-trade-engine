@@ -1,5 +1,6 @@
 <template>
     <div class="min-h-screen bg-slate-950 text-slate-100">
+        <ToastContainer />
         <div class="mx-auto max-w-6xl px-4 py-10">
             <!-- Header -->
             <DashboardHeader
@@ -51,7 +52,7 @@
 
             <!-- Orders overview -->
             <section class="mt-8 space-y-6">
-                <OrdersTable />
+                <OrdersTable ref="ordersTableRef" />
                 <BalanceHistoryTable />
             </section>
         </div>
@@ -64,29 +65,45 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuth } from '../composables/useAuth';
 import { usePusher } from '../composables/usePusher';
+import { useToast } from '../composables/useToast';
 import LimitOrderForm from '../components/LimitOrderForm.vue';
 import OrderbookCard from '../components/OrderbookCard.vue';
 import OrdersTable from '../components/OrdersTable.vue';
 import BalanceHistoryTable from '../components/BalanceHistoryTable.vue';
 import DashboardHeader from '../components/DashboardHeader.vue';
+import ToastContainer from '../components/ToastContainer.vue';
 
 const router = useRouter();
 const { user, isLoading, logout, fetchUser, token } = useAuth();
 const { initializePusher, listenToOrderMatched, unsubscribe } = usePusher();
+const toast = useToast();
 
 const profileData = ref(null);
 const orderbookRef = ref(null);
+const ordersTableRef = ref(null);
 
 const handleOrderMatched = async (data) => {
+    const isBuyer = user.value?.id === data.buyer_id;
+    const side = isBuyer ? 'Buy' : 'Sell';
+
+    toast.success(
+        `Trade complete! ${side} ${data.amount} ${data.symbol} at $${parseFloat(data.price).toFixed(2)}`,
+    );
+
     await fetchProfile();
     await fetchUser();
 };
 
 const handleOrderPlaced = (orderData) => {
-    // Refresh orderbook when order is placed
     if (orderbookRef.value) {
         orderbookRef.value.refreshOrderbook();
     }
+    if (ordersTableRef.value) {
+        ordersTableRef.value.refreshOrders();
+    }
+    toast.info(
+        `Order placed! ${orderData.side.toUpperCase()} ${orderData.symbol}`,
+    );
 };
 
 const colorMap = {
@@ -114,7 +131,6 @@ const balances = computed(() => {
         });
     }
 
-    // Add asset balances
     if (profileData.value.asset_balances) {
         profileData.value.asset_balances.forEach((asset) => {
             cards.push({
@@ -146,6 +162,8 @@ const fetchProfile = async () => {
         // Redirect to login if unauthorized or token missing
         if (error.response?.status === 401) {
             router.push('/login');
+        } else {
+            toast.error('Failed to load profile. Please try again.');
         }
     }
 };
