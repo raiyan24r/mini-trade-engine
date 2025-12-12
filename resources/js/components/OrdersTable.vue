@@ -86,6 +86,15 @@
                     <tr>
                         <th
                             class="cursor-pointer px-4 py-3 text-left font-semibold hover:text-slate-100"
+                            @click="toggleSort('id')"
+                        >
+                            ID
+                            <span v-if="sortBy === 'id'" class="ml-1">{{
+                                sortOrder === 'asc' ? '↑' : '↓'
+                            }}</span>
+                        </th>
+                        <th
+                            class="cursor-pointer px-4 py-3 text-left font-semibold hover:text-slate-100"
                             @click="toggleSort('symbol')"
                         >
                             Symbol

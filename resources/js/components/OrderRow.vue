@@ -1,5 +1,6 @@
 <template>
     <tr>
+        <td class="px-4 py-3 text-slate-400">#{{ order.id }}</td>
         <td class="px-4 py-3 font-semibold text-white">
             {{ order.symbol }}
         </td>
