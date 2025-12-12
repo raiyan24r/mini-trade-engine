@@ -68,17 +68,6 @@
                 </button>
             </form>
 
-            <!-- Demo credentials hint -->
-            <div
-                class="mt-6 rounded-xl border border-indigo-500/40 bg-indigo-600/10 p-4"
-            >
-                <p class="text-sm text-indigo-200">
-                    <strong>Demo account:</strong><br />
-                    Email: test@example.com<br />
-                    Password: password
-                </p>
-            </div>
-
             <!-- Register link -->
             <div class="mt-6 text-center">
                 <p class="text-slate-400">
