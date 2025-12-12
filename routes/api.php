@@ -15,4 +15,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/orders', [OrderController::class, 'index']);
     Route::post('/orders', [OrderController::class, 'store']);
     Route::get('/my-orders', [OrderController::class, 'myOrders']);
+    Route::post('/orders/{id}/cancel', [OrderController::class, 'cancel']);
 });

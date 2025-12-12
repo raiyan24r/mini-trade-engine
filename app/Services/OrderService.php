@@ -231,4 +231,44 @@ class OrderService
     {
         return round($value, 8);
     }
+
+    public function cancelOrder(int $orderId, int $userId): void
+    {
+        $this->db->transaction(function () use ($orderId, $userId): void {
+            $order = Order::query()
+                ->where('id', $orderId)
+                ->where('user_id', $userId)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if ($order->status !== Order::STATUS_OPEN) {
+                throw new RuntimeException('Only open orders can be cancelled.');
+            }
+
+            $user = User::whereKey($userId)->lockForUpdate()->firstOrFail();
+
+            if ($order->side === Order::SIDE_BUY) {
+                // Refund reserved USD
+                $cost = $order->price * $order->amount;
+                $fee = $cost * self::COMMISSION_RATE;
+                $totalReserve = $cost + $fee;
+
+                $user->balance = (float) $user->balance + $totalReserve;
+                $user->save();
+            } else {
+                // Release locked asset
+                $asset = Asset::where('user_id', $userId)
+                    ->where('symbol', $order->symbol)
+                    ->lockForUpdate()
+                    ->firstOrFail();
+
+                $asset->amount = (float) $asset->amount + $order->amount;
+                $asset->locked_amount = (float) $asset->locked_amount - $order->amount;
+                $asset->save();
+            }
+
+            $order->status = Order::STATUS_CANCELLED;
+            $order->save();
+        });
+    }
 }

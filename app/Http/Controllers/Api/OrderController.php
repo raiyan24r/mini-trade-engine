@@ -54,4 +54,15 @@ class OrderController
 
         return HttpResponse::success('User orders retrieved successfully', $orders);
     }
+
+    public function cancel(Request $request, int $id): JsonResponse
+    {
+        try {
+            $this->orderService->cancelOrder($id, $request->user()->id);
+
+            return HttpResponse::success('Order cancelled successfully');
+        } catch (RuntimeException $e) {
+            return HttpResponse::error($e->getMessage(), null, 400);
+        }
+    }
 }
