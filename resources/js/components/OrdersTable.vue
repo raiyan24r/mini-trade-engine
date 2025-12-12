@@ -212,11 +212,12 @@
 
 <script setup>
 import axios from 'axios';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, onBeforeUnmount, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import BaseCard from './BaseCard.vue';
 import CardHeader from './CardHeader.vue';
 import OrderRow from './OrderRow.vue';
+import { usePusher } from '../composables/usePusher.js';
 
 const router = useRouter();
 const orders = ref([]);
@@ -372,5 +373,17 @@ const handleCancelOrder = async (orderId) => {
 
 onMounted(() => {
     fetchOrders();
+});
+
+const { listenToOrderMatched, unsubscribe } = usePusher();
+
+const handleOrderMatched = async (data) => {
+    await fetchOrders();
+};
+
+listenToOrderMatched(handleOrderMatched);
+
+onBeforeUnmount(() => {
+    unsubscribe(handleOrderMatched);
 });
 </script>

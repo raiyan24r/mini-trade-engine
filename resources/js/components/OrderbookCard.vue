@@ -39,9 +39,10 @@
 
 <script setup>
 import axios from 'axios';
-import { onMounted, ref, watch } from 'vue';
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuth } from '../composables/useAuth';
+import { usePusher } from '../composables/usePusher';
 import BaseCard from './BaseCard.vue';
 import CardHeader from './CardHeader.vue';
 import OrderbookSection from './OrderbookSection.vue';
@@ -59,6 +60,7 @@ const props = defineProps({
 
 const router = useRouter();
 const { token } = useAuth();
+const { listenToOrderMatched, unsubscribe } = usePusher();
 
 const selectedSymbol = ref(props.initialSymbol || props.symbols[0] || 'BTC');
 const orderbook = ref({ asks: [], bids: [] });
@@ -98,5 +100,15 @@ watch(selectedSymbol, async (symbol) => {
 
 onMounted(async () => {
     await fetchOrderbook(selectedSymbol.value);
+
+    const handleOrderMatched = async (data) => {
+        await fetchOrderbook(selectedSymbol.value);
+    };
+
+    listenToOrderMatched(handleOrderMatched);
+
+    onBeforeUnmount(() => {
+        unsubscribe(handleOrderMatched);
+    });
 });
 </script>

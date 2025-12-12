@@ -47,18 +47,6 @@
                     </button>
                 </div>
             </label>
-
-            <label class="flex flex-col gap-2 text-sm text-slate-300">
-                Price
-                <input
-                    v-model="form.price"
-                    type="number"
-                    inputmode="decimal"
-                    placeholder="e.g. 42000"
-                    class="w-full rounded-xl border border-slate-800 bg-slate-900 px-3 py-3 text-white shadow-inner focus:border-indigo-500 focus:outline-none"
-                />
-            </label>
-
             <label class="flex flex-col gap-2 text-sm text-slate-300">
                 Amount
                 <input
@@ -69,6 +57,16 @@
                     class="w-full rounded-xl border border-slate-800 bg-slate-900 px-3 py-3 text-white shadow-inner focus:border-indigo-500 focus:outline-none"
                 />
             </label>
+            <label class="flex flex-col gap-2 text-sm text-slate-300">
+                Price per Unit
+                <input
+                    v-model="form.price"
+                    type="number"
+                    inputmode="decimal"
+                    placeholder="e.g. 42000"
+                    class="w-full rounded-xl border border-slate-800 bg-slate-900 px-3 py-3 text-white shadow-inner focus:border-indigo-500 focus:outline-none"
+                />
+            </label>
         </div>
 
         <div
@@ -76,10 +74,10 @@
         >
             <div>
                 <p class="text-xs tracking-wide text-slate-500 uppercase">
-                    Estimated total
+                    {{ form.side === 'buy' ? 'Total Cost' : 'Total Proceeds' }}
                 </p>
                 <p class="text-lg font-semibold text-white">
-                    {{ estimatedTotal }} {{ form.symbol }}
+                    {{ estimatedTotal }} USD
                 </p>
             </div>
             <button

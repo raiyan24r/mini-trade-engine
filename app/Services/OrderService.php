@@ -2,12 +2,14 @@
 
 namespace App\Services;
 
+use App\Events\OrderMatched;
 use App\Models\Asset;
 use App\Models\Order;
 use App\Models\Trade;
 use App\Models\User;
 use App\Repositories\OrderRepository;
 use Illuminate\Database\DatabaseManager;
+use Illuminate\Support\Facades\Event;
 use RuntimeException;
 
 class OrderService
@@ -233,6 +235,18 @@ class OrderService
         ]);
 
         BalanceHistoryService::logTradeEarnings($seller, $volume, $trade->id, $buyOrder->symbol);
+
+        // Dispatch order matched event to both parties (synchronously)
+        Event::dispatch(new OrderMatched(
+            $buyer->id,
+            $seller->id,
+            $buyOrder->symbol,
+            $matchPrice,
+            $amount,
+            $buyOrder->id,
+            $sellOrder->id,
+            $trade->id
+        ));
 
         return $trade->toArray();
     }

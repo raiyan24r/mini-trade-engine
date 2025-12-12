@@ -48,7 +48,7 @@
 
             <!-- Orders overview -->
             <section class="mt-8 space-y-6">
-                <OrdersTable :orders="orders" />
+                <OrdersTable />
                 <BalanceHistoryTable />
             </section>
         </div>
@@ -57,9 +57,10 @@
 
 <script setup>
 import axios from 'axios';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuth } from '../composables/useAuth';
+import { usePusher } from '../composables/usePusher';
 import LimitOrderForm from '../components/LimitOrderForm.vue';
 import OrderbookCard from '../components/OrderbookCard.vue';
 import OrdersTable from '../components/OrdersTable.vue';
@@ -68,8 +69,14 @@ import DashboardHeader from '../components/DashboardHeader.vue';
 
 const router = useRouter();
 const { user, isLoading, logout, fetchUser, token } = useAuth();
+const { initializePusher, listenToOrderMatched, unsubscribe } = usePusher();
 
 const profileData = ref(null);
+
+const handleOrderMatched = async (data) => {
+    await fetchProfile();
+    await fetchUser();
+};
 
 const colorMap = {
     USD: 'bg-indigo-600/20 text-indigo-200 ring-1 ring-indigo-500/40',
@@ -114,36 +121,6 @@ const balances = computed(() => {
     return cards;
 });
 
-const orders = [
-    {
-        id: 1,
-        symbol: 'BTC',
-        side: 'Buy',
-        price: '$42,120',
-        amount: '0.25',
-        status: 'Open',
-        date: '2025-12-11',
-    },
-    {
-        id: 2,
-        symbol: 'ETH',
-        side: 'Sell',
-        price: '$2,320',
-        amount: '1.20',
-        status: 'Filled',
-        date: '2025-12-10',
-    },
-    {
-        id: 3,
-        symbol: 'BTC',
-        side: 'Sell',
-        price: '$41,800',
-        amount: '0.10',
-        status: 'Cancelled',
-        date: '2025-12-08',
-    },
-];
-
 const fetchProfile = async () => {
     if (!token.value) {
         router.push('/login');
@@ -174,7 +151,18 @@ onMounted(async () => {
 
     if (!profileData.value) {
         router.push('/login');
+        return;
     }
+
+    // Initialize Pusher connection
+    initializePusher(user.value.id);
+
+    // Listen for order matched events
+    listenToOrderMatched(handleOrderMatched);
+});
+
+onBeforeUnmount(() => {
+    unsubscribe(handleOrderMatched);
 });
 
 const handleLogout = async () => {
