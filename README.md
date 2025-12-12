@@ -8,6 +8,11 @@ A real-time trading engine built with Laravel 12 and Vue 3 as a technical assign
 
 ## 📝 Overview
 
+### 📹 Loom Video Overview 
+https://www.loom.com/share/afe4b990b0bc4cffb42a1371180f8b70
+
+
+
 This project fulfills the following requirements:
 - **Full Stack Development**: Laravel API backend + Vue.js Composition API frontend
 - **Financial Data Integrity**: Atomic transactions, race condition prevention
