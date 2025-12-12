@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property float $price
  * @property float $amount
  * @property float $filled_amount
+ * @property \Illuminate\Support\Carbon|null $cancelled_at
  */
 class Order extends Model
 {
@@ -26,6 +27,7 @@ class Order extends Model
         'amount',
         'filled_amount',
         'status',
+        'cancelled_at',
     ];
 
     protected function casts(): array
@@ -35,6 +37,7 @@ class Order extends Model
             'amount' => 'float',
             'filled_amount' => 'float',
             'status' => 'integer',
+            'cancelled_at' => 'datetime',
         ];
     }
 

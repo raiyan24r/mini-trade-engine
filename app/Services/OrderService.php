@@ -68,12 +68,14 @@ class OrderService
 
         return $orders->map(static function (Order $order): array {
             return [
+                'id' => $order->id,
                 'symbol' => $order->symbol,
                 'side' => $order->side,
                 'price' => (float) $order->price,
                 'amount' => (float) $order->amount,
                 'status' => $order->status,
                 'date' => $order->created_at->toDateTimeString(),
+                'cancelled_at' => $order->cancelled_at?->toDateTimeString(),
             ];
         })->toArray();
     }
@@ -248,7 +250,7 @@ class OrderService
             $user = User::whereKey($userId)->lockForUpdate()->firstOrFail();
 
             if ($order->side === Order::SIDE_BUY) {
-                // Refund reserved USD
+
                 $cost = $order->price * $order->amount;
                 $fee = $cost * self::COMMISSION_RATE;
                 $totalReserve = $cost + $fee;
@@ -256,7 +258,6 @@ class OrderService
                 $user->balance = (float) $user->balance + $totalReserve;
                 $user->save();
             } else {
-                // Release locked asset
                 $asset = Asset::where('user_id', $userId)
                     ->where('symbol', $order->symbol)
                     ->lockForUpdate()
@@ -268,6 +269,7 @@ class OrderService
             }
 
             $order->status = Order::STATUS_CANCELLED;
+            $order->cancelled_at = now();
             $order->save();
         });
     }

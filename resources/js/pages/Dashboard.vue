@@ -46,7 +46,7 @@
                 </section>
             </div>
 
-            <!-- Orders and wallet overview -->
+            <!-- Orders overview -->
             <section class="mt-8 space-y-6">
                 <OrdersTable :orders="orders" />
             </section>
