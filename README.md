@@ -17,7 +17,7 @@ This project fulfills the following requirements:
 
 ## 🚀 Features
 
-### Core Assignment Requirements ✅
+### Core Requirements ✅
 - ✅ **Real-Time Trading**: Instant order matching with live WebSocket updates via Pusher
 - ✅ **Limit Orders**: Full match implementation (no partial fills)
 - ✅ **Financial Integrity**: Atomic transactions with database locks
@@ -316,8 +316,6 @@ mini-trade-engine/
 - **SQL Injection Prevention**: Eloquent ORM with prepared statements
 - **XSS Protection**: Vue 3 automatic escaping
 
-## 📊 API Endpoints
-
 ### 🔥 Core Order Matching & Real-Time Integration
 
 **Order Matching Flow:**
@@ -371,6 +369,9 @@ channel.bind('order.matched', (data) => {
 ```
 
 ---
+
+
+## 📊 API Endpoints
 
 #### Authentication
 | Method | Endpoint | Purpose |
