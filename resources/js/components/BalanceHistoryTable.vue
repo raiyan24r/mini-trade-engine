@@ -207,6 +207,14 @@ const fetchHistory = async () => {
     }
 };
 
+const refreshHistory = async () => {
+    await fetchHistory();
+};
+
+defineExpose({
+    refreshHistory,
+});
+
 onMounted(() => {
     fetchHistory();
 });

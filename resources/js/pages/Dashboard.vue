@@ -53,7 +53,7 @@
             <!-- Orders overview -->
             <section class="mt-8 space-y-6">
                 <OrdersTable ref="ordersTableRef" />
-                <BalanceHistoryTable />
+                <BalanceHistoryTable ref="balanceHistoryRef" />
             </section>
         </div>
     </div>
@@ -81,6 +81,7 @@ const toast = useToast();
 const profileData = ref(null);
 const orderbookRef = ref(null);
 const ordersTableRef = ref(null);
+const balanceHistoryRef = ref(null);
 
 const handleOrderMatched = async (data) => {
     const isBuyer = user.value?.id === data.buyer_id;
@@ -100,6 +101,9 @@ const handleOrderPlaced = (orderData) => {
     }
     if (ordersTableRef.value) {
         ordersTableRef.value.refreshOrders();
+    }
+    if (balanceHistoryRef.value) {
+        balanceHistoryRef.value.refreshHistory();
     }
     toast.info(
         `Order placed! ${orderData.side.toUpperCase()} ${orderData.symbol}`,
