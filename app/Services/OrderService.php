@@ -59,6 +59,25 @@ class OrderService
         ];
     }
 
+    public function getUserOrders(int $userId): array
+    {
+        $orders = Order::query()
+            ->where('user_id', $userId)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return $orders->map(static function (Order $order): array {
+            return [
+                'symbol' => $order->symbol,
+                'side' => $order->side,
+                'price' => (float) $order->price,
+                'amount' => (float) $order->amount,
+                'status' => $order->status,
+                'date' => $order->created_at->toDateTimeString(),
+            ];
+        })->toArray();
+    }
+
     /**
      * Create a limit order and attempt immediate full match.
      */

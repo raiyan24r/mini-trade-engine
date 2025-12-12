@@ -47,4 +47,11 @@ class OrderController
             return HttpResponse::error($e->getMessage(), null, 400);
         }
     }
+
+    public function myOrders(Request $request): JsonResponse
+    {
+        $orders = $this->orderService->getUserOrders($request->user()->id);
+
+        return HttpResponse::success('User orders retrieved successfully', $orders);
+    }
 }
