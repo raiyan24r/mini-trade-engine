@@ -66,6 +66,15 @@ const selectedSymbol = ref(props.initialSymbol || props.symbols[0] || 'BTC');
 const orderbook = ref({ asks: [], bids: [] });
 const loading = ref(false);
 
+const refreshOrderbook = async () => {
+    await fetchOrderbook(selectedSymbol.value);
+};
+
+// Expose method to parent
+defineExpose({
+    refreshOrderbook,
+});
+
 const fetchOrderbook = async (symbol) => {
     if (!token.value) {
         router.push('/login');

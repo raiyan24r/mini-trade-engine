@@ -116,6 +116,8 @@ import { useAuth } from '../composables/useAuth';
 import BaseCard from './BaseCard.vue';
 import CardHeader from './CardHeader.vue';
 
+const emit = defineEmits(['orderPlaced']);
+
 const router = useRouter();
 const { token } = useAuth();
 
@@ -158,6 +160,12 @@ const placeOrder = async () => {
         });
 
         success.value = response.data.message || 'Order placed successfully!';
+
+        // Emit event to notify parent components
+        emit('orderPlaced', {
+            symbol: form.symbol,
+            side: form.side,
+        });
 
         // Reset form
         form.price = '';

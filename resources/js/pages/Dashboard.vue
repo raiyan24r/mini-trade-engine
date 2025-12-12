@@ -37,12 +37,15 @@
             <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
                 <!-- Limit order form -->
                 <section class="lg:col-span-2">
-                    <LimitOrderForm />
+                    <LimitOrderForm @order-placed="handleOrderPlaced" />
                 </section>
 
                 <!-- Orderbook -->
                 <section>
-                    <OrderbookCard :symbols="['BTC', 'ETH']" />
+                    <OrderbookCard
+                        ref="orderbookRef"
+                        :symbols="['BTC', 'ETH']"
+                    />
                 </section>
             </div>
 
@@ -72,10 +75,18 @@ const { user, isLoading, logout, fetchUser, token } = useAuth();
 const { initializePusher, listenToOrderMatched, unsubscribe } = usePusher();
 
 const profileData = ref(null);
+const orderbookRef = ref(null);
 
 const handleOrderMatched = async (data) => {
     await fetchProfile();
     await fetchUser();
+};
+
+const handleOrderPlaced = (orderData) => {
+    // Refresh orderbook when order is placed
+    if (orderbookRef.value) {
+        orderbookRef.value.refreshOrderbook();
+    }
 };
 
 const colorMap = {
